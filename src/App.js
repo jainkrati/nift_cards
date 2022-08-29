@@ -1,10 +1,11 @@
-import logo from './logo.svg';
 import './App.css';
 
 function App() {
   return (
     <div className="App">
       <header className="App-header">
+      <div className="App-title">Gift a voucher using NIFT cards</div>
+      <p></p>
       <form>
   <label>
     Receiver's Ethereum Address:
@@ -21,7 +22,7 @@ function App() {
     <input type="text" name="name" />
   </label>
   <p></p>
-  <input type="submit" value="Submit" />
+  <input className="submit" type="submit" value="Submit" />
 </form>
       </header>
     </div>
