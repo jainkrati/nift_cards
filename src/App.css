@@ -36,6 +36,9 @@
   color: #61dafb;
 }
 
+.Account-details {
+font-size: 16px;
+}
 .submit {
   font-weight: 700;
   width: 80px;
