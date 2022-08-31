@@ -3,6 +3,7 @@ import './App.css';
 import { ethers } from "ethers";
 import styled from "styled-components";
 import React, { useState } from "react";
+const niftABI = require("./contract/ABI.json");
 
 const theme = {
   blue: {
@@ -41,15 +42,15 @@ Button.defaultProps = {
 
 function App() {
 
-  const [address, setaddress] = useState(
-    ""
-  );
-  const [balance, setbalance] = useState(
-     null)
+  const [address, setAddress] = useState("");
+  const [balance, setBalance] = useState(null)
+  const [receiverAddress, setReceiverAddress] = useState("");
+  const [amount, setAmount] = useState(0);
+  const [description, setDescription] = useState("");
+  const [log,setLog] = useState("");
 
   function connectWallet() {
     if (window.ethereum) {
-    
       // res[0] for fetching a first wallet
       window.ethereum
         .request({ method: "eth_requestAccounts" })
@@ -59,8 +60,7 @@ function App() {
     }
   }
   
-  const getbalance = (address) => {
-    
+  const getBalance = (address) => {
     // Requesting balance method
     window.ethereum
       .request({ 
@@ -69,48 +69,65 @@ function App() {
       })
       .then((balance) => {
         // Setting balance
-        setbalance(ethers.utils.formatEther(balance));
+        setBalance(ethers.utils.formatEther(balance));
       });
   };
   
   // Function for getting handling all events
   const accountChangeHandler = (account) => {
     // Setting an address data
-    setaddress(account);
-  
+    setAddress(account);
     // Setting a balance
-    getbalance(account);
+    getBalance(account);
   };
+
+  const provider = new ethers.providers.Web3Provider(window.ethereum); 
+  const signer = provider.getSigner();
+  const niftContract = new ethers.Contract("0xEfab89eC16Abf250b7231270299A3f27D949B15d", niftABI, signer);
+ 
+
+  async function createVoucher(){
+    console.log("creating voucher");
+    let txReceipt = await niftContract.mint(description, amount, receiverAddress, { value: ethers.utils.formatUnits(amount, "wei") });
+    const link = "https://rinkeby.etherscan.io/tx/"+txReceipt.hash;
+    console.log(link);
+    setLog(link);
+    let result = await txReceipt.wait(1)
+    console.log(result);
+  }
 
   return (
     <div className="App">
       <header className="App-header">
       {
-            address ==="" ? <Button onClick={connectWallet} variant="primary">
+          address ==="" ? <Button onClick={connectWallet} variant="primary">
             Connect to wallet
           </Button> : <div className="Account-details"><text>Address: {address}</text><br/><text>Balance: {balance}</text></div>
       } 
     
       <div className="App-title">Gift a voucher using NIFT cards</div>
       <p></p>
-      <form>
-  <label>
-    Receiver's Ethereum Address:
-    <input type="text" name="name" />
-  </label>
-  <p></p>
-  <label>
-    Gift Token Amount (in wei):
-    <input type="text" name="name" />
-  </label>
-  <p></p>
-  <label>
-    Message:
-    <input type="text" name="name" />
-  </label>
-  <p></p>
-  <input className="submit" type="submit" value="Submit" />
-</form>
+      <div className="Voucher-creation-form">
+      <label>
+        Receiver's Ethereum Address:
+        <input type="text" value={receiverAddress} onChange={(e) => setReceiverAddress(e.target.value)} />
+      </label>
+      <p></p>
+      <label>
+        Gift Token Amount (in wei):
+        <input type="text" value={amount} onChange={(e) => setAmount(e.target.value)} />
+      </label>
+      <p></p>
+      <label>
+        Message:
+        <input type="text" value={description} onChange={(e) => setDescription(e.target.value)} />
+      </label>
+      <p></p>
+      <Button onClick={createVoucher}>Submit</Button>
+      {
+        log==="" ? <label></label> : <p><a className="Tx-log" rel="noopener noreferrer" target="_blank" href={log}>Tx link</a></p> 
+      }
+      </div>
       </header>
     </div>
   );
