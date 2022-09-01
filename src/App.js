@@ -51,8 +51,7 @@ function App() {
   const [receiverAddress, setReceiverAddress] = useState("");
   const [amount, setAmount] = useState(0);
   const [description, setDescription] = useState("");
-  const [isModeOne, setModeOne] = useState(false);
-  const [isModeTwo, setModeTwo] = useState(false);
+  const [mode, setMode] = useState(1);
   const [log,setLog] = useState("");
   const [nftList, setNftList] = useState(null);
 
@@ -189,14 +188,12 @@ function App() {
 
   const buttonOneClicked =()=>{
     console.log("Button 1 clicked");
-    setModeOne(true);
-    setModeTwo(false);
+    setMode(1);
   }
 
   const buttonTwoClicked =()=>{
     console.log("Button 2 clicked")
-    setModeOne(false);
-    setModeTwo(true);
+    setMode(2);
   }
  
 
@@ -214,8 +211,7 @@ function App() {
     <div className="App">
       <Button onClick={() => buttonOneClicked()}>Create Voucher</Button>
       <Button onClick={() => buttonTwoClicked()}>Redeem Voucher</Button>
-      { isModeOne ? renderFormView() : <div></div> }
-      { isModeTwo ? renderListView() : <div></div> }
+      { mode === 1 ? renderFormView() : renderListView() }
       {log === "" ? (
             <label></label>
           ) : (
