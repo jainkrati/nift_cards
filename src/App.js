@@ -51,13 +51,11 @@ function App() {
   const [receiverAddress, setReceiverAddress] = useState("");
   const [amount, setAmount] = useState(0);
   const [description, setDescription] = useState("");
-  const [showForm1, setShowForm1] = useState(false);
-  const [showList2, setShowList2] = useState(false);
+  const [mode, setMode] = useState(0);
   const [log,setLog] = useState("");
   const [nftList, setNftList] = useState(null);
-  const [tokenId,setTokenId] = useState("");
-  const provider = new ethers.providers.Web3Provider(window.ethereum, "any"); 
 
+  const provider = new ethers.providers.Web3Provider(window.ethereum, "any"); 
   const signer = provider.getSigner();
   const NIFT_CONTRACT_ADDRESS = "0xEfab89eC16Abf250b7231270299A3f27D949B15d";
   const niftContract = new ethers.Contract(NIFT_CONTRACT_ADDRESS, niftABI, signer);
@@ -66,8 +64,6 @@ function App() {
     network: Network.ETH_RINKEBY,
   };
   const alchemy = new Alchemy(config);      
-
-
 
   function connectWallet() {
     if (window.ethereum) {
@@ -111,9 +107,9 @@ function App() {
           </Button>
         ) : (
           <div className="Account-details">
-            <text>Address: {address}</text>
+            <label>Address: {address}</label>
             <br />
-            <text>Balance: {balance}</text>
+            <label>Balance: {balance}</label>
           </div>
         )}
 
@@ -167,9 +163,16 @@ function App() {
     );
   }
 
-  function redeemNFT(event){
-    setTokenId = event.target.value;
-    alert("Redeeming NFT "+tokenID);
+  async function redeemNFT(event){
+    const tokenId = event.target.value;
+    alert(tokenId);
+    console.log("Redeeming voucher");
+    let txReceipt = await niftContract.redeemVoucher(tokenId);
+    const link = "https://rinkeby.etherscan.io/tx/"+txReceipt.hash;
+    console.log(link);
+    setLog(link);
+    let result = await txReceipt.wait(1)
+    console.log(result);
   }
 
   function niftOnly(nft) {
@@ -180,9 +183,9 @@ function App() {
     console.log(nftList.ownedNfts);
     const allNFTs = nftList.ownedNfts;
 
-    const vouchers = allNFTs.filter(niftOnly).map((nft) =>
+    const vouchers = allNFTs.filter(niftOnly).map((nft) => 
       <div class="grid-item" onClick={redeemNFT} value={nft.tokenId}>
-      <label className="nftDetails">{nft.description}</label><br/>
+      <label className="nftDetails">{nft.tokenId}.{nft.description}</label><br/>
       <img className="cardImage" src={cardImage}/>
       </div>
     );
@@ -198,14 +201,12 @@ function App() {
 
   const buttonOneClicked =()=>{
     console.log("Button 1 clicked")
-    setShowForm1(true)
-    setShowList2(false)
+    setMode(0);
   }
 
   const buttonTwoClicked =()=>{
     console.log("Button 2 clicked")
-    setShowForm1(false)
-    setShowList2(true)
+    setMode(1);
   }
  
 
@@ -219,23 +220,11 @@ function App() {
     console.log(result);
   }
 
-  async function redeemVoucher(){
-    console.log("Redeeming voucher");
-    let txReceipt = await niftContract.redeemVoucher(tokenId);
-    const link = "https://rinkeby.etherscan.io/tx/%22+txReceipt.hash;
-    console.log(link);
-    setLog(link);
-    let result = await txReceipt.wait(1)
-    console.log(result);
-  }
-
-  console.log(showForm1,showList2)
   return (
     <div className="App">
       <Button onClick={() => buttonOneClicked()}>Create Voucher</Button>
       <Button onClick={() => buttonTwoClicked()}>Redeem Voucher</Button>
-      {showForm1 ? renderFormView() : ''}
-      {showList2 ? renderListView() : ''}
+      {mode === 0 ? renderFormView() : renderListView() }
     </div>
   );
 }
