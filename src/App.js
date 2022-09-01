@@ -145,20 +145,6 @@ function App() {
           </label>
           <p></p>
           <Button onClick={createVoucher}>Submit</Button>
-          {log === "" ? (
-            <label></label>
-          ) : (
-            <p>
-              <a
-                className="Tx-log"
-                rel="noopener noreferrer"
-                target="_blank"
-                href={log}
-              >
-                Tx link
-              </a>
-            </p>
-          )}
         </div>
       </header>
     );
@@ -230,6 +216,20 @@ function App() {
       <Button onClick={() => buttonTwoClicked()}>Redeem Voucher</Button>
       { isModeOne ? renderFormView() : <div></div> }
       { isModeTwo ? renderListView() : <div></div> }
+      {log === "" ? (
+            <label></label>
+          ) : (
+            <p>
+              <a
+                className="Tx-log"
+                rel="noopener noreferrer"
+                target="_blank"
+                href={log}
+              >
+                Tx link
+              </a>
+            </p>
+          )}
     </div>
   );
 }
