@@ -54,6 +54,7 @@ function App() {
   const [showList2, setShowList2] = useState(false);
   const [log,setLog] = useState("");
   const [nftList, setNftList] = useState(null);
+  const [tokenId,setTokenId] = useState("");
   const provider = new ethers.providers.Web3Provider(window.ethereum, "any"); 
 
   const signer = provider.getSigner();
@@ -166,7 +167,7 @@ function App() {
   }
 
   function redeemNFT(event){
-    const tokenID = event.target.value;
+    setTokenId = event.target.value;
     alert("Redeeming NFT "+tokenID);
   }
 
@@ -186,7 +187,25 @@ function App() {
       <div>
       <h3>Choose a NIFT NFT to redeem:</h3>
       <ul>{listItems}</ul>
+
+      <Button onClick={redeemVoucher}>Redeem</Button>
+          {log === "" ? (
+            <label></label>
+          ) : (
+            <p>
+              <a
+                className="Tx-log"
+                rel="noopener noreferrer"
+                target="_blank"
+                href={log}
+              >
+                Tx link
+              </a>
+            </p>
+          )}
+
       </div>
+
     );
   }
 
@@ -207,6 +226,16 @@ function App() {
     console.log("creating voucher");
     let txReceipt = await niftContract.mint(description, amount, receiverAddress, { value: ethers.utils.formatUnits(amount, "wei") });
     const link = "https://rinkeby.etherscan.io/tx/"+txReceipt.hash;
+    console.log(link);
+    setLog(link);
+    let result = await txReceipt.wait(1)
+    console.log(result);
+  }
+
+  async function redeemVoucher(){
+    console.log("Redeeming voucher");
+    let txReceipt = await niftContract.redeemVoucher(tokenId);
+    const link = "https://rinkeby.etherscan.io/tx/%22+txReceipt.hash;
     console.log(link);
     setLog(link);
     let result = await txReceipt.wait(1)
