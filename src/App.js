@@ -58,7 +58,7 @@ function App() {
 
   const provider = new ethers.providers.Web3Provider(window.ethereum, "any"); 
   const signer = provider.getSigner();
-  const NIFT_CONTRACT_ADDRESS = "0xEfab89eC16Abf250b7231270299A3f27D949B15d";
+  const NIFT_CONTRACT_ADDRESS = "0x0754D1e3baa0dB1Ad478Fa332700c41fa49Fe43C";
   const niftContract = new ethers.Contract(NIFT_CONTRACT_ADDRESS, niftABI, signer);
   const config = {
     apiKey: 'WZaU55w9LFOHl43mSJKoLulGxNOBGnR0',
@@ -187,7 +187,7 @@ function App() {
 
     const vouchers = allNFTs.map((nft) => 
       <div class="grid-item" onClick={redeemNFT}>
-      <label className="nftDetails">{nft.tokenId}.{nft.description}</label><br/>
+      <label className="nftDetails">NFT ID: {nft.tokenId}</label><br/>
       <img className="cardImage" id={nft.tokenId} src={cardImage}/>
       </div>
     );
