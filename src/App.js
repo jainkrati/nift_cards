@@ -1,5 +1,6 @@
 import {Alchemy, Network} from "alchemy-sdk";
 import './App.css';
+import cardImage from "./NIFT.png"
 
 import { ethers } from "ethers";
 import styled from "styled-components";
@@ -178,14 +179,17 @@ function App() {
     console.log(nftList.ownedNfts);
     const allNFTs = nftList.ownedNfts;
 
-    const listItems = allNFTs.filter(niftOnly).map((nft) =>
-      <li className="card" onClick={redeemNFT} value={nft.tokenId}>{nft.tokenId}.{nft.description}</li>
+    const vouchers = allNFTs.filter(niftOnly).map((nft) =>
+      <div class="grid-item" onClick={redeemNFT} value={nft.tokenId}>
+      <label className="nftDetails">{nft.description}</label><br/>
+      <img className="cardImage" src={cardImage}/>
+      </div>
     );
 
     return(
       <div>
       <h3>Choose a NIFT NFT to redeem:</h3>
-      <ul>{listItems}</ul>
+      <div class="grid-container">{vouchers}</div>
       </div>
     );
   }
