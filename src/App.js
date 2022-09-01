@@ -101,18 +101,6 @@ function App() {
   const renderFormView = () =>{
     return (
       <header className="App-header">
-        {address === "" ? (
-          <Button onClick={connectWallet} variant="primary">
-            Connect to wallet
-          </Button>
-        ) : (
-          <div className="Account-details">
-            <label>Address: {address}</label>
-            <br />
-            <label>Balance: {balance}</label>
-          </div>
-        )}
-
         <div className="App-title">Gift a voucher using NIFT cards</div>
         <p></p>
         <div className="Voucher-creation-form">
@@ -209,8 +197,22 @@ function App() {
 
   return (
     <div className="App">
-      <Button onClick={() => buttonOneClicked()}>Create Voucher</Button>
+     {address === "" ? (
+          <Button onClick={connectWallet} variant="primary">
+            Connect to wallet
+          </Button>
+        ) : (
+          <div className="Account-details">
+            <label>Address: {address}</label>
+            <br />
+            <label>Balance: {balance}</label>
+            <br />
+            <Button onClick={() => buttonOneClicked()}>Create Voucher</Button>
       <Button onClick={() => buttonTwoClicked()}>Redeem Voucher</Button>
+          </div>
+          
+        )}
+      
       { mode === 1 ? renderFormView() : renderListView() }
       {log === "" ? (
             <label></label>
