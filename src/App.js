@@ -53,47 +53,19 @@ function App() {
   const [showForm1, setShowForm1] = useState(false);
   const [showList2, setShowList2] = useState(false);
   const [log,setLog] = useState("");
-  const network="rinkeby";
+  const [nftList, setNftList] = useState(null);
   const provider = new ethers.providers.Web3Provider(window.ethereum, "any"); 
-//   const provider = ethers.getDefaultProvider(network, {
-//     alchemy: 'NY6OVEVWvAeCaXd4L1cPEiM0y_W_tFD0',
-// });
 
   const signer = provider.getSigner();
-  const niftContract = new ethers.Contract("0xEfab89eC16Abf250b7231270299A3f27D949B15d", niftABI, signer);
+  const NIFT_CONTRACT_ADDRESS = "0xEfab89eC16Abf250b7231270299A3f27D949B15d";
+  const niftContract = new ethers.Contract(NIFT_CONTRACT_ADDRESS, niftABI, signer);
+  const config = {
+    apiKey: 'WZaU55w9LFOHl43mSJKoLulGxNOBGnR0',
+    network: Network.ETH_RINKEBY,
+  };
+  const alchemy = new Alchemy(config);      
 
-  useEffect(() => {
-    // const address = "elanhalpern.eth";
-    console.log(signer, signer.provider ,Object.keys(signer.provider.provider))
-    getNfts(signer)
-    
-  }, []);
 
-  const getNfts=(signer)=>{
-    const baseURL = "https://eth-rinkeby.alchemyapi.io/v2/NY6OVEVWvAeCaXd4L1cPEiM0y_W_tFD0";
-    const url = `${baseURL}/getNFTs/?owner=${address}`;
-    console.log(address)
-    var requestOptions = {
-      method: "get",
-      redirect: "follow",
-    };
-
-    fetch(url, requestOptions)
-      .then((response) => {
-        const nfts = response["data"];
-
-        // Parse output
-        const numNfts = nfts["totalCount"];
-        const nftList = nfts["ownedNfts"];
-
-        console.log(`Total NFTs owned by ${address}: ${numNfts} \n`);
-
-        let i = 1;
-
-        console.log(nfts,nftList)
-      })
-      .catch((error) => console.log("error", error));
-  }
 
   function connectWallet() {
     if (window.ethereum) {
@@ -125,6 +97,7 @@ function App() {
     setAddress(account);
     // Setting a balance
     getBalance(account);
+    alchemy.nft.getNftsForOwner("0x44AC194359fA44eCe6Cb2E53E8c90547BCCb95a0").then(setNftList);
   };
 
   const renderFormView = () =>{
@@ -192,37 +165,27 @@ function App() {
     );
   }
 
-  const config = {
-    apiKey: 'yuMjdZzH7AjXXFZfrSnI-v6NUXuFyzx8',
-    network: Network.ETH_MAINNET,
-  };
-  const alchemy = new Alchemy(config);      
-  
+  function redeemNFT(){
+    alert("Redeeming NFT");
+  }
+  function niftOnly(nft) {
+    return nft.contract.address.toLowerCase() === NIFT_CONTRACT_ADDRESS.toLowerCase();
+  }
 
   const renderListView=()=>{
+    console.log(nftList.ownedNfts);
+    const allNFTs = nftList.ownedNfts;
+
+    const listItems = allNFTs.filter(niftOnly).map((nft) =>
+      <li className="card" onClick={redeemNFT}>{nft.tokenId}.{nft.description}</li>
+    );
+
     return(
-      <h3>Your NFTs</h3>
-
-      
-        // Wallet address
-        //const address = "elanhalpern.eth";
-      
-        // Get all NFTs
-        
-        //console.log(`Total NFTs owned by ${address}: ${numNfts} \n`);
-      
-        // let i = 1;
-      
-        // for (let nft of nftList) {
-        //   console.log(`${i}. ${nft.title}`);
-        //   i++;
-        // }
-      
-
-
-
-
-    )
+      <div>
+      <h3>Choose a NIFT NFT to redeem:</h3>
+      <ul>{listItems}</ul>
+      </div>
+    );
   }
 
   const buttonOneClicked =()=>{
