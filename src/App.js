@@ -95,7 +95,7 @@ function App() {
     setAddress(account);
     // Setting a balance
     getBalance(account);
-    alchemy.nft.getNftsForOwner("0x44AC194359fA44eCe6Cb2E53E8c90547BCCb95a0").then(setNftList);
+    alchemy.nft.getNftsForOwner(account).then(setNftList);
   };
 
   const renderFormView = () =>{
@@ -155,6 +155,7 @@ function App() {
   }
 
   const renderListView=()=>{
+    alchemy.nft.getNftsForOwner(address).then(setNftList);
     const allNFTs = nftList.ownedNfts.filter(niftOnly);
     console.log(allNFTs);
 
