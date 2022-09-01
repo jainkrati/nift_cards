@@ -51,7 +51,8 @@ function App() {
   const [receiverAddress, setReceiverAddress] = useState("");
   const [amount, setAmount] = useState(0);
   const [description, setDescription] = useState("");
-  const [mode, setMode] = useState(0);
+  const [isModeOne, setModeOne] = useState(false);
+  const [isModeTwo, setModeTwo] = useState(false);
   const [log,setLog] = useState("");
   const [nftList, setNftList] = useState(null);
 
@@ -164,7 +165,8 @@ function App() {
   }
 
   async function redeemNFT(event){
-    const tokenId = event.target.value;
+    console.log(event);
+    const tokenId = event.target.id;
     alert(tokenId);
     console.log("Redeeming voucher");
     let txReceipt = await niftContract.redeemVoucher(tokenId);
@@ -180,13 +182,13 @@ function App() {
   }
 
   const renderListView=()=>{
-    console.log(nftList.ownedNfts);
-    const allNFTs = nftList.ownedNfts;
+    const allNFTs = nftList.ownedNfts.filter(niftOnly);
+    console.log(allNFTs);
 
-    const vouchers = allNFTs.filter(niftOnly).map((nft) => 
-      <div class="grid-item" onClick={redeemNFT} value={nft.tokenId}>
+    const vouchers = allNFTs.map((nft) => 
+      <div class="grid-item" onClick={redeemNFT}>
       <label className="nftDetails">{nft.tokenId}.{nft.description}</label><br/>
-      <img className="cardImage" src={cardImage}/>
+      <img className="cardImage" id={nft.tokenId} src={cardImage}/>
       </div>
     );
 
@@ -200,13 +202,15 @@ function App() {
   }
 
   const buttonOneClicked =()=>{
-    console.log("Button 1 clicked")
-    setMode(0);
+    console.log("Button 1 clicked");
+    setModeOne(true);
+    setModeTwo(false);
   }
 
   const buttonTwoClicked =()=>{
     console.log("Button 2 clicked")
-    setMode(1);
+    setModeOne(false);
+    setModeTwo(true);
   }
  
 
@@ -224,7 +228,8 @@ function App() {
     <div className="App">
       <Button onClick={() => buttonOneClicked()}>Create Voucher</Button>
       <Button onClick={() => buttonTwoClicked()}>Redeem Voucher</Button>
-      {mode === 0 ? renderFormView() : renderListView() }
+      { isModeOne ? renderFormView() : <div></div> }
+      { isModeTwo ? renderListView() : <div></div> }
     </div>
   );
 }
