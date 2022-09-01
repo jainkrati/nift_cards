@@ -165,9 +165,11 @@ function App() {
     );
   }
 
-  function redeemNFT(){
-    alert("Redeeming NFT");
+  function redeemNFT(event){
+    const tokenID = event.target.value;
+    alert("Redeeming NFT "+tokenID);
   }
+
   function niftOnly(nft) {
     return nft.contract.address.toLowerCase() === NIFT_CONTRACT_ADDRESS.toLowerCase();
   }
@@ -177,7 +179,7 @@ function App() {
     const allNFTs = nftList.ownedNfts;
 
     const listItems = allNFTs.filter(niftOnly).map((nft) =>
-      <li className="card" onClick={redeemNFT}>{nft.tokenId}.{nft.description}</li>
+      <li className="card" onClick={redeemNFT} value={nft.tokenId}>{nft.tokenId}.{nft.description}</li>
     );
 
     return(
